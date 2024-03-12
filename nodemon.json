@@ -1,0 +1,7 @@
+{
+    "watch": ["server", "db"],
+    "ext": "ts",
+    "execMap": {
+      "ts": "tsx"
+    }
+  }
