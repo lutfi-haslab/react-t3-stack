@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { CanvasProvider } from "./context/CanvasContext";
 import "./index.css";
 
 import { RouterProvider, createRouter } from "@tanstack/react-router";
@@ -22,8 +23,8 @@ const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
-    <React.StrictMode>
+    <CanvasProvider>
       <RouterProvider router={router} />
-    </React.StrictMode>
+    </CanvasProvider>
   );
 }

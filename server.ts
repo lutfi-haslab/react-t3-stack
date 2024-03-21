@@ -1,15 +1,15 @@
 // @ts-nocheck
 import express from "express";
+import pg from "pg";
 import { telefunc } from "telefunc";
 import externalRoutes from "./server/ext.router";
-import pg from "pg";
-
+import path from "path";
 
 startServer();
 
 export const client = new pg.Pool({
   user: "hasdev",
-  host: "localhost", 
+  host: "localhost",
   database: "practice",
   password: "hasdev",
   port: 5432,
@@ -23,11 +23,11 @@ async function startServer() {
 }
 
 function installTelefunc(app) {
-  app.use(express.text());
+  app.use(express.text({ limit: "10mb" }));
   app.all("/_telefunc", async (req, res) => {
     const { originalUrl: url, method, body } = req;
     const httpResponse = await telefunc({ url, method, body });
-    console.log(url, method, body);
+    // console.log(url, method, body);
     res
       .status(httpResponse.statusCode)
       .type(httpResponse.contentType)
@@ -40,7 +40,11 @@ function installTelefunc(app) {
 async function installFrontend(app) {
   if (process.env.NODE_ENV === "production") {
     const root = await getRoot();
-    app.use(express.static(`${root}/dist/client`));
+    const distPath = `${root}/dist/client`;
+    app.use(express.static(distPath));
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
+    });
   } else {
     const vite = await import("vite");
     const viteDevMiddleware = (
@@ -66,4 +70,3 @@ async function getRoot() {
   const root = __dirname;
   return root;
 }
-
